@@ -11,6 +11,11 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/','WelcomeController@index')->name('welcome');
+
+Auth::routes();
+
+// a GET logout for convenience while developing
+Route::get('/logout','Auth\LoginController@logout');
+
+Route::middleware('auth')->get('/home', 'HomeController@index')->name('home');

@@ -58,6 +58,19 @@ return [
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
+        'k9homes' => [
+            'driver' => 'mysql',
+            'host' => env('REMOTE_DB_HOST'),
+            'port' => env('REMOTE_DB_PORT', '3306'),
+            'database' => env('REMOTE_DB_DATABASE'),
+            'username' => env('REMOTE_DB_USERNAME'),
+            'password' => env('REMOTE_DB_PASSWORD'),
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix' => '',
+            'strict' => false,
+            'engine' => null,
+        ],
 
         'pgsql' => [
             'driver' => 'pgsql',

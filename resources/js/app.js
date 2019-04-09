@@ -7,7 +7,17 @@
 
 require('./bootstrap');
 
-window.Vue = require('vue');
+
+
+import Vue from 'vue';
+import Router from 'vue-router';
+import Vuetify from 'vuetify';
+
+import store from './store/vuex';
+
+Vue.use(Router)
+
+Vue.use(Vuetify)
 
 /**
  * The following block of code may be used to automatically register your
@@ -17,10 +27,31 @@ window.Vue = require('vue');
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
 
-// const files = require.context('./', true, /\.vue$/i);
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
+const files = require.context('./', true, /\.vue$/i);
+files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
+//files.keys().map(key => console.info(key))
+
+const App = require('./App.vue').default;
+
+const routes = [
+    { path: '/', component: files('./components/Dashboard.vue').default }
+    
+  ];
+
+const router = new Router({
+    routes
+    
+});
+
+Vue.config.productionTip = false
+
+// import api from './components/app/lib/apiService.js';
+import apiService from './lib/apiServiceClass.js';
+
+const api =  new apiService;
+
+Vue.prototype.$api = api;
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -28,6 +59,15 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+
+
 const app = new Vue({
-    el: '#app'
+    el: '#app',
+    router,
+    store,
+    components: { App },
+    template: '<App/>',
+    
+    
+    
 });
