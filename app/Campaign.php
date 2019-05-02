@@ -10,10 +10,23 @@ class Campaign extends Model
 
     public function prospects()
     {
-        return $this->belongsToMany('App\Prospect');
+        return $this->belongsToMany('App\Prospect')->withPivot('status','note')->withTimestamps();
     }
 
-    public function campaignProspect() {
-        return $this->hasMany('App\Prospect')->using('App\CampaignProspect');
+    public function contacts()
+    {
+        return $this->belongsToMany('App\Contact');
     }
+
+    public function activities()
+    {
+        return $this->hasMany('App\Activity');
+    }
+
+    public function resources()
+    {
+        return $this->belongsToMany('App\User');
+    }
+
+    
 }

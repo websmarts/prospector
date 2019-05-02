@@ -16,16 +16,22 @@ class CampaignsTableSeeder extends Seeder
         
         $account = Account::first();
         
-        Campaign::create([
+        $campaignOne = Campaign::create([
             'account_id' => $account->id,
             'name' => 'Pet Products'
 
         ]);
 
-        Campaign::create([
+        $campaignOne->resources()->attach(2);
+        $campaignOne->resources()->attach(3);
+
+        $campaignTwo = Campaign::create([
             'account_id' => $account->id,
             'name' => 'Promo Products'
 
         ]);
+
+        $campaignTwo->resources()->attach(2);
+
     }
 }

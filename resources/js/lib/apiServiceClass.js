@@ -17,6 +17,12 @@ export default class {
 
     service.defaults.headers.common['Authorization'] = 'Bearer '+ api_token.content;
 
+
+    if(window.env.debug){
+      service.interceptors.response.use( (response) => { phpdebugbar.ajaxHandler.handle(response.request); return response; });
+    }
+    
+
     service.interceptors.request.use(function(config) {
         store.startRequest();
         //alert('started loadind ...');

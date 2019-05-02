@@ -17,7 +17,7 @@ class CreateCampaignProspectTable extends Migration
             $table->increments('id');
             $table->integer('campaign_id')->unsigned();
             $table->integer('prospect_id')->unsigned();
-            $table->string('status')->nullable();
+            $table->tinyInteger('status')->nullable();
             $table->mediumText('note')->nullable();
 
             $table->timestamps();

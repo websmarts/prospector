@@ -15,14 +15,17 @@ class CreateActivitiesTable extends Migration
     {
         Schema::create('activities', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('account_id')->unsigned();
-            $table->integer('campaign_prospect_id')->unsigned();
+        
+            $table->integer('campaign_id')->unsigned();
+            $table->integer('prospect_id')->unsigned();
             $table->integer('parent_id')->unsigned()->default(0);
             $table->integer('contact_id')->unsigned()->nullable();
             $table->string('activity')->nullable(); // headline
-            $table->string('note')->nullable(); // details
+            $table->mediumText('note')->nullable(); // details
             $table->datetime('due')->nullable();
             $table->tinyInteger('status')->default(0);// > 0 == done
+            $table->integer('created_by')->unsigned();// person who created the activity
+            $table->integer('assigned_to')->unsigned()->nullable();// assigned tp
 
             $table->softDeletes();
             

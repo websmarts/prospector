@@ -7,14 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 class Contact extends Model
 {
     protected $fillable = [
-        'account_id',
-        'card_id',
-        'contact_role',
+        'prospect_id',
         'name',
         'phone',
         'mobile',
-        'email'
+        'email',
+        'note'
         
     ];
+
+
+    public function campaigns()
+    {
+        return $this->belongsToMany('App\Campaign')->withPivot('contact_role');
+    }
 }
 

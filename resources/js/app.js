@@ -13,7 +13,18 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Vuetify from 'vuetify';
 
-import store from './store/vuex';
+import store from './store/index';
+
+import helpers from './helpers'
+
+const plugin = {
+    install () {
+        Vue.helpers = helpers
+        Vue.prototype.$helpers = helpers
+    }
+}
+
+Vue.use(plugin)
 
 Vue.use(Router)
 
@@ -27,6 +38,7 @@ Vue.use(Vuetify)
  * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
  */
 
+ 
 const files = require.context('./', true, /\.vue$/i);
 files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
 

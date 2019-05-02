@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class Prospect extends Model
 {
     protected $fillable = [
-        'account_id',
         'name',
         'addres1',
         'address2',
@@ -21,14 +20,18 @@ class Prospect extends Model
     ];
 
 
-
-    
-    
-
-    
     public function campaigns()
     {
-        return $this->belongsToMany('App\Campaign')->using('App\CampaignProspect');
+        return $this->belongsToMany('App\Campaign')->withPivot('status','note');
+    }
+
+    public function contacts()
+    {
+        return $this->hasMany('App\Contact');
+    }
+
+    public function activities() {
+        return $this->hasMany('App\Activity');
     }
 
     

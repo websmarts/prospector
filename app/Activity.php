@@ -7,14 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class Activity extends Model
 {
     protected $fillable = [
-        'account_id',
-        'campaign_prospect_id',
+    
+        'campaign_id',
+        'prospect_id',
         'parent_id',
         'contact_id',
         'activity',
         'note',
         'due',
-        'status'
+        'status',
+        'created_by',
+        'assigned_to'
     ];
 
     

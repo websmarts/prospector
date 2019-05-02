@@ -15,9 +15,7 @@ class CreateProspectsTable extends Migration
     {
         Schema::create('prospects', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('account_id')->unsigned();
             $table->string('name');
-            $table->integer('contact_id')->unsigned()->nullable();// may not have a prospect->contact
             
             $table->string('address1')->nullable();
             $table->string('address2')->nullable();
@@ -27,7 +25,7 @@ class CreateProspectsTable extends Migration
             $table->string('state')->nullable();
             $table->string('country')->nullable();
             $table->string('notes')->nullable();
-            $table->integer('tag_id')->unsigned()->nullable(); // touched, not interested, potential, converted
+            
             $table->timestamps();
         });
     }

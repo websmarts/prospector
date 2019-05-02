@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateCampaignProspectContactsTable extends Migration
+class CreateCampaignUserTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,10 @@ class CreateCampaignProspectContactsTable extends Migration
      */
     public function up()
     {
-        Schema::create('campaign_prospect_contact', function (Blueprint $table) {
+        Schema::create('campaign_user', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('campaign_prospect_id')->unsigned();
-            $table->integer('contact_id')->unsigned();
-            $table->string('contact_role')->nullable();
-            
+            $table->integer('campaign_id')->unsigned();
+            $table->integer('user_id')->unsigned();
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ class CreateCampaignProspectContactsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('campaign_prospect_contact');
+        Schema::dropIfExists('campaign_user');
     }
 }

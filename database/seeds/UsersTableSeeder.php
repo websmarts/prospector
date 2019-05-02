@@ -33,5 +33,15 @@ class UsersTableSeeder extends Seeder
             'api_token' => Str::random(60),
 
         ]);
+
+        User::create([
+            'name' =>  'Darren Mcrostie',
+            'email' => 'darren@here.com',
+            'password' => bcrypt('pass'),
+            'account_id' => Account::first()->id,
+            'email_verified_at' => Carbon::now(),
+            'api_token' => Str::random(60),
+
+        ]);
     }
 }

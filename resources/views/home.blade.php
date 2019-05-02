@@ -43,6 +43,14 @@
 </head>
 <body>
     <div id="app" data-app></div> 
+    <script>
+        //var env.debug = 
+
+        window.env = {
+            debug: {{ env('APP_DEBUG',false) ? 1 : 0 }}
+        };
+
+    </script>
     
     <script src="{{ mix('js/app.js') }}"></script>
 </body>
