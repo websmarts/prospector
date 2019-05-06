@@ -2888,6 +2888,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     profileAddress: function profileAddress() {
       var detail = "<p>";
+      detail += _.get(this.orgdata, 'phone') ? this.orgdata.phone + "&nbsp; | &nbsp;" : '';
+      detail += _.get(this.orgdata, 'email') ? this.orgdata.email : '';
+      detail += "<br>";
       detail += _.get(this.orgdata, 'address1') ? this.orgdata.address1 : '';
       detail += _.get(this.orgdata, 'address2') ? ", " + this.orgdata.address2 : '';
       detail += _.get(this.orgdata, 'address3') ? ", " + this.orgdata.address3 : '';

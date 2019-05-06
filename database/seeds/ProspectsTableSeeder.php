@@ -44,7 +44,7 @@ class ProspectsTableSeeder extends Seeder
                 ]);
 
             // Attach prospect to a campaign
-            $cid = rand(1,2); // fake a campaign->id to attach
+            $cid = 1; // fake a campaign->id to attach
             $campaign = Campaign::find($cid);
 
             $prospect->refresh();
@@ -71,27 +71,27 @@ class ProspectsTableSeeder extends Seeder
             }
 
             // Create an activity for the campaign for the prospect
-            $activity = Activity::create([
+            // $activity = Activity::create([
 
-                'parent_id' => 0,
-                'campaign_id' => $campaign->id,
-                'prospect_id' => $prospect->id,
-                'activity' => 'do something with '.$prospect->name,
-                'note' => $faker->paragraph,
-                'due' => Carbon::now()->subDays(rand(-30,30)),
-                'contact_id' => $contact ? $contact->id : null,
-                'created_by' => rand(2,3),
-                'assigned_to' => rand(2,3)
+            //     'parent_id' => 0,
+            //     'campaign_id' => $campaign->id,
+            //     'prospect_id' => $prospect->id,
+            //     'activity' => 'do something with '.$prospect->name,
+            //     'note' => $faker->paragraph,
+            //     'due' => Carbon::now()->subDays(rand(-30,30)),
+            //     'contact_id' => $contact ? $contact->id : null,
+            //     'created_by' => rand(2,3),
+            //     'assigned_to' => rand(2,3)
 
 
-            ]);
+            // ]);
 
             // if $contact is not null then create a campaign contact for this prospect
             if($contact){
                 $campaign->contacts()->save($contact);
             }
 
-            $campaign->activities()->save($activity);
+            // $campaign->activities()->save($activity);
 
             
 

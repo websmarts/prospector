@@ -148,6 +148,9 @@ export default {
         },
         profileAddress() {
             let detail =  "<p>"
+            detail += _.get(this.orgdata,'phone') ?  this.orgdata.phone + "&nbsp; | &nbsp;" : ''
+            detail += _.get(this.orgdata,'email') ?  this.orgdata.email : ''
+            detail += "<br>"
             detail += _.get(this.orgdata,'address1') ?  this.orgdata.address1 : ''
             detail += _.get(this.orgdata,'address2') ? ", " + this.orgdata.address2 : ''
             detail += _.get(this.orgdata,'address3') ? ", " + this.orgdata.address3 : ''
