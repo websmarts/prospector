@@ -19,3 +19,6 @@ Auth::routes();
 Route::get('/logout','Auth\LoginController@logout');
 
 Route::middleware('auth')->get('/home', 'HomeController@index')->name('home');
+
+Route::middleware('auth')->get('/campaign', 'CampaignController@index')->name('campaign');
+Route::middleware('auth')->post('/campaign', 'CampaignController@store')->name('create_campaign');

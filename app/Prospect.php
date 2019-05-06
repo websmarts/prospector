@@ -7,8 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Prospect extends Model
 {
     protected $fillable = [
+        'account_id',
         'name',
-        'addres1',
+        'phone',
+        'email',
+        'address1',
         'address2',
         'address3',
         'city',
@@ -19,7 +22,7 @@ class Prospect extends Model
         
     ];
 
-
+    
     public function campaigns()
     {
         return $this->belongsToMany('App\Campaign')->withPivot('status','note');
@@ -32,6 +35,10 @@ class Prospect extends Model
 
     public function activities() {
         return $this->hasMany('App\Activity');
+    }
+
+    public function account() {
+        return $this->hasOne('App\Account');
     }
 
     

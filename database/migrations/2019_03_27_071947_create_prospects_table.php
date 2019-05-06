@@ -15,8 +15,13 @@ class CreateProspectsTable extends Migration
     {
         Schema::create('prospects', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('account_id')->unsigned();
             $table->string('name');
+
+            $table->string('phone')->nullable();
+            $table->string('email')->nullable();
             
+
             $table->string('address1')->nullable();
             $table->string('address2')->nullable();
             $table->string('address3')->nullable();

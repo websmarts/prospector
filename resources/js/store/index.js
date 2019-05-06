@@ -61,7 +61,7 @@ export default new Vuex.Store({
 
 		SELECT_PROSPECT: function(state,data){
 			
-			state.prospect = data.prospect
+			state.prospect = Object.assign({},data.prospect)
 			state.prospectActivities = data.activities
 			state.prospectContacts = data.contacts
 			//state.prospectCampaigns = data.campaigns
@@ -77,14 +77,19 @@ export default new Vuex.Store({
 			})
 
 			// console.log('FoundIndex=',foundIndex)
-			Vue.set(state.prospects,foundIndex, state.prospect)
+			Vue.set(state.prospects,foundIndex, prospect)
+
+			state.prospect = Object.assign({},prospect)
+
+			
 		},
+		
 
 		UPDATE_CONTACT: function(state,contact){
-			console.log('commiting contact update',contact)
+			// console.log('commiting contact update',contact)
 			// replace the contact in the contacts array
 			var foundIndex1 = state.contacts.findIndex( x =>  x.id == contact.id )
-			console.log('index1',foundIndex1)
+			// console.log('index1',foundIndex1)
 			Vue.set(state.contacts,foundIndex1, contact)
 
 			// replace the contact in the prospectContacts array
@@ -94,16 +99,16 @@ export default new Vuex.Store({
 
 		},
 		UPDATE_ACTIVITY: function(state,activity){
-			console.log('commiting activity update',activity)
+			// console.log('commiting activity update',activity)
 
 			// replace the activity in the activities array
 			var foundIndex1 = state.activities.findIndex( x =>  x.id == activity.id )
-			console.log('index1',foundIndex1)
+			//console.log('index1',foundIndex1)
 			Vue.set(state.activities,foundIndex1, activity)
 
 			// replace the activity in the prospectactivities array
 			var foundIndex2 = state.prospectActivities.findIndex( x =>  x.id == activity.id )
-			console.log('index2',foundIndex2)
+			//console.log('index2',foundIndex2)
 			Vue.set(state.prospectActivities,foundIndex2, activity)
 
 		},
@@ -117,15 +122,21 @@ export default new Vuex.Store({
 
 		},
 		ADD_ACTIVITY: function(state,activity){
-			console.log('commiting add activity ',activity)
+			// console.log('commiting add activity ',activity)
 			// add the activity in the activities array
 			state.activities.push(activity)
-
-
 
 			// add the activity in the prospectactivities array
 			state.prospectActivities.push(activity)
 
+		},
+		UPDATE_CAMPAIGN_PROSPECT: function(state,campaignProspect) {
+			var foundIndex = state.prospects.findIndex( x =>  (x.id == campaignProspect.id && x.campaign_id == campaignProspect.campaign_id) )
+
+			Vue.set(state.prospects,foundIndex,campaignProspect)
+
+			state.prospect = campaignProspect
+			
 		}
 
 
@@ -144,6 +155,10 @@ export default new Vuex.Store({
 			
 			return _.filter(state.prospects,{campaign_id:state.campaign.id})
 		},
+		campaignProspect(state,getters) {
+			
+				return _.find(getters.campaignProspects,{campaign_id: state.campaign.id})
+		},
 		campaignResources(state){
 			return _.filter(state.resources,{campaign_id:state.campaign.id})
 		},
@@ -152,14 +167,14 @@ export default new Vuex.Store({
 		},
 		campaignActivitiesDue(state,getters){
 			return _.filter(getters.campaignActivities, function(a){
-				// console.log('Activity due',a.due)
-				// console.log('Moment due',_moment(a.due))
-				// console.log('Moment isAfter',_moment(a.due).isAfter())
 				if(a.status > 0 && !_moment(a.due).isAfter(_moment(),'day')){
 					return a
 				}
 			})
 			// and the due date muct be today or less
+		},
+		userCampaignActivitiesDue(state,getters) {
+			return _.filter(getters.campaignActivitiesDue,{assigned_to: state.user.id})
 		},
 		prospect(state){
 			if(state.prospect.hasOwnProperty("id")) {
@@ -169,13 +184,7 @@ export default new Vuex.Store({
 		},
 		prospectActivities(state,getters) {
 			if(getters.prospect){
-				// sort by due date
-				// let prospectActivities = _.clone(state.prospectActivities)
-				// return prospectActivities.sort(function compare(a, b) {
-				// 	var dateA = new Date(a.due);
-				// 	var dateB = new Date(b.due);
-				// 	return dateA - dateB;
-				//   });
+				
 				return state.prospectActivities
 				
 			}
@@ -187,13 +196,7 @@ export default new Vuex.Store({
 				return state.prospectContacts
 			}
 			return []
-		},
-		// prospectCampaign(state,getters) {
-		// 	if(getters.prospect){
-		// 		return _.find(state.prospectCampaigns,{campaign_id: state.campaign.id})
-		// 	}
-		// 	return {}
-		// }
+		}
 	
 		
 	},
@@ -215,6 +218,8 @@ export default new Vuex.Store({
 		selectProspect({commit, state},prospectId){
 			
 			api.get('/api/prospect/' + prospectId +'?campaign=' +  state.campaign.id, (status,data) =>{
+				
+				
 				commit('SELECT_PROSPECT',data.data)
 			})
 			
@@ -226,14 +231,14 @@ export default new Vuex.Store({
 			})
 		},
 		saveProspectContact(context,contact){
-			console.log('Save prospectContact',contact)
+			// console.log('Save prospectContact',contact)
 			api.post('/api/contact',contact,(status,data) =>{
 
 				context.commit('ADD_CONTACT',data.data)
 			})
 		},
 		updateProspectContact(context,contact){
-			console.log('Update prospectContact',contact)
+			// console.log('Update prospectContact',contact)
 			api.patch('/api/contact/'+ contact.id, contact,(status,data) => {
 					
 				// dispatch('init')
@@ -252,13 +257,23 @@ export default new Vuex.Store({
 			
 		},
 		updateProspectActivity(context,activity){
-			console.log('Update prospectActivity',activity)
+			// console.log('Update prospectActivity',activity)
 			api.patch('/api/activity/'+ activity.id, activity,(status,data) => {
 					
 				
 				context.commit('UPDATE_ACTIVITY',data.data)
+
+				context.dispatch('updateCampaignProspectStatus',activity.campaign_status)
 				
 			})
+		},
+		updateCampaignProspectStatus({commit,getters},campaign_status){
+				// console.log('updating campaign_status',campaign_status)
+
+			var campaignProspect = _.clone(getters.campaignProspect)
+			campaignProspect.campaign_status = campaign_status
+
+			commit('UPDATE_CAMPAIGN_PROSPECT',campaignProspect)
 		}
 
 	}

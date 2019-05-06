@@ -1938,7 +1938,9 @@ __webpack_require__.r(__webpack_exports__);
     var formdata = {};
     keys.forEach(function (key) {
       return formdata[key] = _this.item.hasOwnProperty(key) ? _this.item[key] : '';
-    });
+    }); // get the prospects current campaign status - this can be updated on the activity form - a logical convenience
+
+    formdata.campaign_status = this.prospect.campaign_status;
     this.formdata = Object.assign({}, formdata); // make a copy of original data for taint testing
 
     this.orgdata = Object.assign({}, this.formdata);
@@ -2651,7 +2653,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2665,11 +2666,11 @@ __webpack_require__.r(__webpack_exports__);
       }, {
         text: 'Status',
         align: 'left',
-        value: 'status'
+        value: 'campaign_status'
       }, {
-        text: 'Tasks due',
+        text: 'ToDo',
         align: 'left',
-        value: 'activity_count'
+        value: 'user_activity_due_count'
       }]
     };
   },
@@ -2679,6 +2680,7 @@ __webpack_require__.r(__webpack_exports__);
       var items = [];
       var prospects = this.$store.getters.campaignProspects;
       var campaignActivitiesDue = this.$store.getters.campaignActivitiesDue;
+      var userCampaignActivitiesDue = this.$store.getters.userCampaignActivitiesDue;
       var search = this.search;
 
       _.each(_.filter(prospects, function (prospect) {
@@ -2686,7 +2688,13 @@ __webpack_require__.r(__webpack_exports__);
           return prospect;
         }
       }), function (prospect) {
-        var counter = _.filter(campaignActivitiesDue, function (o) {
+        var userProspectActivities = _.filter(userCampaignActivitiesDue, function (o) {
+          if (o.prospect_id == prospect.id) {
+            return o;
+          }
+        }).length;
+
+        var totalProspectActivities = _.filter(campaignActivitiesDue, function (o) {
           if (o.prospect_id == prospect.id) {
             return o;
           }
@@ -2695,8 +2703,9 @@ __webpack_require__.r(__webpack_exports__);
         items.push({
           id: prospect.id,
           name: prospect.name,
-          status: '',
-          activity_count: counter
+          campaign_status: prospect.campaign_status,
+          user_activity_due_count: userProspectActivities,
+          total_activity_due_count: totalProspectActivities
         });
       });
 
@@ -2714,9 +2723,8 @@ __webpack_require__.r(__webpack_exports__);
       // console.log('Row selected - item.id:',item.id)
       this.$store.dispatch('selectProspect', item.id);
     },
-    selectTask: function selectTask(item) {
-      // First select the prospect who own the task
-      this.selectRow(item); //console.log('Task Row selected - item.id:',item.id)
+    displayProspectCampaignStatus: function displayProspectCampaignStatus(statuscode) {
+      return this.$helpers.displayProspectCampaignStatus(statuscode);
     }
   },
   mounted: function mounted() {}
@@ -2733,8 +2741,18 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2850,17 +2868,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
-    var _formdata;
-
     return {
       valid: false,
       showform: false,
       orgdata: {},
-      formdata: (_formdata = {
-        name: 'Fred and Barney',
-        address1: '123 The main Road',
-        address2: null
-      }, _defineProperty(_formdata, "address2", null), _defineProperty(_formdata, "city", 'Rokeby'), _defineProperty(_formdata, "postcode", '3821'), _defineProperty(_formdata, "state", 'NT'), _defineProperty(_formdata, "country", 'Australia'), _defineProperty(_formdata, "notes", 'Client notes'), _defineProperty(_formdata, "prospect_campaign_note", 'Campaign notes for this prospect'), _defineProperty(_formdata, "prospect_campaign_status", 'Basically open or closed'), _formdata),
+      formdata: {},
       states: ['VIC', 'NSW', 'NT', 'QLD', 'SA', 'TAS', 'WA']
     };
   },
@@ -2880,6 +2892,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       detail += _.get(this.orgdata, 'address2') ? ", " + this.orgdata.address2 : '';
       detail += _.get(this.orgdata, 'address3') ? ", " + this.orgdata.address3 : '';
       detail += _.get(this.orgdata, 'city') ? ", " + this.orgdata.city : '';
+      detail += _.get(this.orgdata, 'state') ? ", " + this.orgdata.state : '';
       detail += _.get(this.orgdata, 'postcode') ? ", " + this.orgdata.postcode : '';
       detail += "</p>";
       detail += _.get(this.orgdata, 'prospect_campaign_note') ? "<p style='border-top: 1px solid #ccc'>Campaign note:<br>" + this.orgdata.prospect_campaign_note + "</p>" : '';
@@ -38344,23 +38357,22 @@ var render = function() {
                               _c("v-select", {
                                 attrs: {
                                   items: [
-                                    { value: 1, text: "Closed" },
-                                    { value: 0, text: "Open" }
+                                    { value: 1, text: "Active" },
+                                    { value: 0, text: "Closed" }
                                   ],
                                   label: "Prospects campaign status*",
                                   required: ""
                                 },
                                 model: {
-                                  value: _vm.formdata.prospect_campaign_status,
+                                  value: _vm.formdata.campaign_status,
                                   callback: function($$v) {
                                     _vm.$set(
                                       _vm.formdata,
-                                      "prospect_campaign_status",
+                                      "campaign_status",
                                       $$v
                                     )
                                   },
-                                  expression:
-                                    "formdata.prospect_campaign_status"
+                                  expression: "formdata.campaign_status"
                                 }
                               })
                             ],
@@ -39341,20 +39353,24 @@ var render = function() {
                     [
                       _c("td", [_vm._v(_vm._s(props.item.name))]),
                       _vm._v(" "),
-                      _c("td", [_vm._v(_vm._s(props.item.status))]),
+                      _c("td", [
+                        _vm._v(
+                          _vm._s(
+                            _vm.displayProspectCampaignStatus(
+                              props.item.campaign_status
+                            )
+                          )
+                        )
+                      ]),
                       _vm._v(" "),
-                      _c(
-                        "td",
-                        {
-                          on: {
-                            click: function($event) {
-                              $event.stopPropagation()
-                              return _vm.selectTask(props.item)
-                            }
-                          }
-                        },
-                        [_vm._v(_vm._s(props.item.activity_count))]
-                      )
+                      _c("td", [
+                        _vm._v(
+                          _vm._s(props.item.user_activity_due_count) +
+                            "(" +
+                            _vm._s(props.item.total_activity_due_count) +
+                            ")"
+                        )
+                      ])
                     ]
                   )
                 ]
@@ -39498,6 +39514,40 @@ var render = function() {
                 "div",
                 [
                   _c("v-text-field", {
+                    attrs: { label: "Phone" },
+                    model: {
+                      value: _vm.formdata.phone,
+                      callback: function($$v) {
+                        _vm.$set(_vm.formdata, "phone", $$v)
+                      },
+                      expression: "formdata.phone"
+                    }
+                  })
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                [
+                  _c("v-text-field", {
+                    attrs: { label: "Email" },
+                    model: {
+                      value: _vm.formdata.email,
+                      callback: function($$v) {
+                        _vm.$set(_vm.formdata, "email", $$v)
+                      },
+                      expression: "formdata.email"
+                    }
+                  })
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                [
+                  _c("v-text-field", {
                     attrs: { label: "Address1" },
                     model: {
                       value: _vm.formdata.address1,
@@ -39568,11 +39618,11 @@ var render = function() {
                   _c("v-text-field", {
                     attrs: { label: "Postcode" },
                     model: {
-                      value: _vm.formdata.address3,
+                      value: _vm.formdata.postcode,
                       callback: function($$v) {
-                        _vm.$set(_vm.formdata, "address3", $$v)
+                        _vm.$set(_vm.formdata, "postcode", $$v)
                       },
-                      expression: "formdata.address3"
+                      expression: "formdata.postcode"
                     }
                   })
                 ],
@@ -39637,11 +39687,11 @@ var render = function() {
                       hint: "Add prospect campaign notes here"
                     },
                     model: {
-                      value: _vm.formdata.prospect_campaign_note,
+                      value: _vm.formdata.campaign_note,
                       callback: function($$v) {
-                        _vm.$set(_vm.formdata, "prospect_campaign_note", $$v)
+                        _vm.$set(_vm.formdata, "campaign_note", $$v)
                       },
-                      expression: "formdata.prospect_campaign_note"
+                      expression: "formdata.campaign_note"
                     }
                   })
                 ],
@@ -39662,11 +39712,11 @@ var render = function() {
                       required: ""
                     },
                     model: {
-                      value: _vm.formdata.prospect_campaign_status,
+                      value: _vm.formdata.campaign_status,
                       callback: function($$v) {
-                        _vm.$set(_vm.formdata, "prospect_campaign_status", $$v)
+                        _vm.$set(_vm.formdata, "campaign_status", $$v)
                       },
-                      expression: "formdata.prospect_campaign_status"
+                      expression: "formdata.campaign_status"
                     }
                   })
                 ],
@@ -82421,6 +82471,21 @@ __webpack_require__.r(__webpack_exports__);
     }
 
     return status;
+  },
+  displayProspectCampaignStatus: function displayProspectCampaignStatus(statuscode) {
+    var status = '';
+
+    switch (statuscode) {
+      case 0:
+        status = 'Closed';
+        break;
+
+      case 1:
+        status = 'Active';
+        break;
+    }
+
+    return status;
   }
 });
 
@@ -82675,7 +82740,7 @@ var api = new _lib_apiServiceClass_js__WEBPACK_IMPORTED_MODULE_2__["default"]();
       state.prospectContacts = {}; //state.prospectCampaigns = []
     },
     SELECT_PROSPECT: function SELECT_PROSPECT(state, data) {
-      state.prospect = data.prospect;
+      state.prospect = Object.assign({}, data.prospect);
       state.prospectActivities = data.activities;
       state.prospectContacts = data.contacts; //state.prospectCampaigns = data.campaigns
     },
@@ -82685,15 +82750,16 @@ var api = new _lib_apiServiceClass_js__WEBPACK_IMPORTED_MODULE_2__["default"]();
         return x.id == state.prospect.id && x.campaign_id == state.prospect.campaign_id;
       }); // console.log('FoundIndex=',foundIndex)
 
-      vue__WEBPACK_IMPORTED_MODULE_1___default.a.set(state.prospects, foundIndex, state.prospect);
+      vue__WEBPACK_IMPORTED_MODULE_1___default.a.set(state.prospects, foundIndex, prospect);
+      state.prospect = Object.assign({}, prospect);
     },
     UPDATE_CONTACT: function UPDATE_CONTACT(state, contact) {
-      console.log('commiting contact update', contact); // replace the contact in the contacts array
-
+      // console.log('commiting contact update',contact)
+      // replace the contact in the contacts array
       var foundIndex1 = state.contacts.findIndex(function (x) {
         return x.id == contact.id;
-      });
-      console.log('index1', foundIndex1);
+      }); // console.log('index1',foundIndex1)
+
       vue__WEBPACK_IMPORTED_MODULE_1___default.a.set(state.contacts, foundIndex1, contact); // replace the contact in the prospectContacts array
 
       var foundIndex2 = state.prospectContacts.findIndex(function (x) {
@@ -82703,18 +82769,18 @@ var api = new _lib_apiServiceClass_js__WEBPACK_IMPORTED_MODULE_2__["default"]();
       vue__WEBPACK_IMPORTED_MODULE_1___default.a.set(state.prospectContacts, foundIndex2, contact);
     },
     UPDATE_ACTIVITY: function UPDATE_ACTIVITY(state, activity) {
-      console.log('commiting activity update', activity); // replace the activity in the activities array
-
+      // console.log('commiting activity update',activity)
+      // replace the activity in the activities array
       var foundIndex1 = state.activities.findIndex(function (x) {
         return x.id == activity.id;
-      });
-      console.log('index1', foundIndex1);
+      }); //console.log('index1',foundIndex1)
+
       vue__WEBPACK_IMPORTED_MODULE_1___default.a.set(state.activities, foundIndex1, activity); // replace the activity in the prospectactivities array
 
       var foundIndex2 = state.prospectActivities.findIndex(function (x) {
         return x.id == activity.id;
-      });
-      console.log('index2', foundIndex2);
+      }); //console.log('index2',foundIndex2)
+
       vue__WEBPACK_IMPORTED_MODULE_1___default.a.set(state.prospectActivities, foundIndex2, activity);
     },
     ADD_CONTACT: function ADD_CONTACT(state, contact) {
@@ -82725,11 +82791,18 @@ var api = new _lib_apiServiceClass_js__WEBPACK_IMPORTED_MODULE_2__["default"]();
       state.prospectContacts.push(contact);
     },
     ADD_ACTIVITY: function ADD_ACTIVITY(state, activity) {
-      console.log('commiting add activity ', activity); // add the activity in the activities array
-
+      // console.log('commiting add activity ',activity)
+      // add the activity in the activities array
       state.activities.push(activity); // add the activity in the prospectactivities array
 
       state.prospectActivities.push(activity);
+    },
+    UPDATE_CAMPAIGN_PROSPECT: function UPDATE_CAMPAIGN_PROSPECT(state, campaignProspect) {
+      var foundIndex = state.prospects.findIndex(function (x) {
+        return x.id == campaignProspect.id && x.campaign_id == campaignProspect.campaign_id;
+      });
+      vue__WEBPACK_IMPORTED_MODULE_1___default.a.set(state.prospects, foundIndex, campaignProspect);
+      state.prospect = campaignProspect;
     }
   },
   getters: {
@@ -82745,6 +82818,11 @@ var api = new _lib_apiServiceClass_js__WEBPACK_IMPORTED_MODULE_2__["default"]();
         campaign_id: state.campaign.id
       });
     },
+    campaignProspect: function campaignProspect(state, getters) {
+      return _.find(getters.campaignProspects, {
+        campaign_id: state.campaign.id
+      });
+    },
     campaignResources: function campaignResources(state) {
       return _.filter(state.resources, {
         campaign_id: state.campaign.id
@@ -82757,13 +82835,15 @@ var api = new _lib_apiServiceClass_js__WEBPACK_IMPORTED_MODULE_2__["default"]();
     },
     campaignActivitiesDue: function campaignActivitiesDue(state, getters) {
       return _.filter(getters.campaignActivities, function (a) {
-        // console.log('Activity due',a.due)
-        // console.log('Moment due',_moment(a.due))
-        // console.log('Moment isAfter',_moment(a.due).isAfter())
         if (a.status > 0 && !_moment(a.due).isAfter(_moment(), 'day')) {
           return a;
         }
       }); // and the due date muct be today or less
+    },
+    userCampaignActivitiesDue: function userCampaignActivitiesDue(state, getters) {
+      return _.filter(getters.campaignActivitiesDue, {
+        assigned_to: state.user.id
+      });
     },
     prospect: function prospect(state) {
       if (state.prospect.hasOwnProperty("id")) {
@@ -82774,13 +82854,6 @@ var api = new _lib_apiServiceClass_js__WEBPACK_IMPORTED_MODULE_2__["default"]();
     },
     prospectActivities: function prospectActivities(state, getters) {
       if (getters.prospect) {
-        // sort by due date
-        // let prospectActivities = _.clone(state.prospectActivities)
-        // return prospectActivities.sort(function compare(a, b) {
-        // 	var dateA = new Date(a.due);
-        // 	var dateB = new Date(b.due);
-        // 	return dateA - dateB;
-        //   });
         return state.prospectActivities;
       }
 
@@ -82821,13 +82894,13 @@ var api = new _lib_apiServiceClass_js__WEBPACK_IMPORTED_MODULE_2__["default"]();
       });
     },
     saveProspectContact: function saveProspectContact(context, contact) {
-      console.log('Save prospectContact', contact);
+      // console.log('Save prospectContact',contact)
       api.post('/api/contact', contact, function (status, data) {
         context.commit('ADD_CONTACT', data.data);
       });
     },
     updateProspectContact: function updateProspectContact(context, contact) {
-      console.log('Update prospectContact', contact);
+      // console.log('Update prospectContact',contact)
       api.patch('/api/contact/' + contact.id, contact, function (status, data) {
         // dispatch('init')
         context.commit('UPDATE_CONTACT', data.data);
@@ -82840,10 +82913,21 @@ var api = new _lib_apiServiceClass_js__WEBPACK_IMPORTED_MODULE_2__["default"]();
       });
     },
     updateProspectActivity: function updateProspectActivity(context, activity) {
-      console.log('Update prospectActivity', activity);
+      // console.log('Update prospectActivity',activity)
       api.patch('/api/activity/' + activity.id, activity, function (status, data) {
         context.commit('UPDATE_ACTIVITY', data.data);
+        context.dispatch('updateCampaignProspectStatus', activity.campaign_status);
       });
+    },
+    updateCampaignProspectStatus: function updateCampaignProspectStatus(_ref3, campaign_status) {
+      var commit = _ref3.commit,
+          getters = _ref3.getters;
+
+      // console.log('updating campaign_status',campaign_status)
+      var campaignProspect = _.clone(getters.campaignProspect);
+
+      campaignProspect.campaign_status = campaign_status;
+      commit('UPDATE_CAMPAIGN_PROSPECT', campaignProspect);
     }
   }
 }));

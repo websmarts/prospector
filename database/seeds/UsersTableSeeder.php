@@ -16,7 +16,7 @@ class UsersTableSeeder extends Seeder
     {
         User::create([
             'name' =>  'Administrator',
-            'email' => 'admin@here.com',
+            'email' => 'admin@k9homes.com.au',
             'password' => bcrypt('pass'),
             'account_id' => 0,
             'email_verified_at' => Carbon::now(),
@@ -26,7 +26,7 @@ class UsersTableSeeder extends Seeder
 
         User::create([
             'name' =>  'Ian Maclagan',
-            'email' => 'ian@here.com',
+            'email' => 'ian@k9homes.com.au',
             'password' => bcrypt('pass'),
             'account_id' => Account::first()->id,
             'email_verified_at' => Carbon::now(),
@@ -35,8 +35,17 @@ class UsersTableSeeder extends Seeder
         ]);
 
         User::create([
-            'name' =>  'Darren Mcrostie',
-            'email' => 'darren@here.com',
+            'name' =>  'Darren',
+            'email' => 'darren@k9homes.com.au',
+            'password' => bcrypt('pass'),
+            'account_id' => Account::first()->id,
+            'email_verified_at' => Carbon::now(),
+            'api_token' => Str::random(60),
+
+        ]);
+        User::create([
+            'name' =>  'Kerry',
+            'email' => 'kerry@k9homes.com.au',
             'password' => bcrypt('pass'),
             'account_id' => Account::first()->id,
             'email_verified_at' => Carbon::now(),

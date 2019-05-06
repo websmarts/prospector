@@ -22,9 +22,8 @@
       <tr  :active="props.item.id == prospect.id" @click="selectRow(props.item)">
       
       <td>{{ props.item.name }}</td>
-      <td>{{ props.item.status }}</td>
-      <td @click.stop="selectTask(props.item)">{{ props.item.activity_count }}</td>
-      
+      <td>{{ displayProspectCampaignStatus(props.item.campaign_status) }}</td>
+      <td>{{ props.item.user_activity_due_count }}({{ props.item.total_activity_due_count }})</td>
       
       </tr> 
       
@@ -56,13 +55,14 @@
           {
             text: 'Status',
             align: 'left',
-            value: 'status'
+            value: 'campaign_status'
           },
           {
-            text: 'Tasks due',
+            text: 'ToDo',
             align: 'left',
-            value: 'activity_count'
-          },
+            value: 'user_activity_due_count'
+          }
+          
           
 
           
@@ -76,6 +76,7 @@
           let items = [];
           let prospects = this.$store.getters.campaignProspects
           let campaignActivitiesDue = this.$store.getters.campaignActivitiesDue
+          let userCampaignActivitiesDue = this.$store.getters.userCampaignActivitiesDue
 
           let search = this.search
 
@@ -84,21 +85,28 @@
               return prospect
             }
           }), function(prospect){
-              var counter = _.filter(campaignActivitiesDue, function(o) { 
-                if (o.prospect_id == prospect.id) {
-                
+
+
+              var userProspectActivities = _.filter(userCampaignActivitiesDue, function(o) { 
+                if (o.prospect_id == prospect.id) {               
                   return o 
-                }
-                
-                
+                }                
+                }).length;
+
+                var totalProspectActivities = _.filter(campaignActivitiesDue, function(o) { 
+                if (o.prospect_id == prospect.id) {               
+                  return o 
+                }                
                 }).length;
 
       
               items.push({
                 id: prospect.id,
                 name: prospect.name, 
-                status: '', 
-                activity_count: counter
+                campaign_status: prospect.campaign_status, 
+                user_activity_due_count: userProspectActivities,
+                total_activity_due_count: totalProspectActivities
+
               })
           })
           
@@ -126,13 +134,11 @@
           // console.log('Row selected - item.id:',item.id)
           this.$store.dispatch('selectProspect',item.id)
         },
-        selectTask(item){
-          // First select the prospect who own the task
-          this.selectRow(item)
-
-
-          //console.log('Task Row selected - item.id:',item.id)
+        displayProspectCampaignStatus(statuscode){
+          
+          return this.$helpers.displayProspectCampaignStatus(statuscode)
         }
+        
 
         
     },

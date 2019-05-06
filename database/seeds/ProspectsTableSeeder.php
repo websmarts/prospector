@@ -31,6 +31,7 @@ class ProspectsTableSeeder extends Seeder
             
         
             $prospect = Prospect::create([
+                    'account_id' => 1,
                     'name' => $c->name,                  
                     'address1' => $c->address1,
                     'address2' => $c->address2,
@@ -47,7 +48,7 @@ class ProspectsTableSeeder extends Seeder
             $campaign = Campaign::find($cid);
 
             $prospect->refresh();
-            $campaign->prospects()->attach($prospect->id,['note'=>'my note','status'=>0]);
+            $campaign->prospects()->attach($prospect->id,['note'=>'my note','status'=>null]);
             $faker = Faker::create();
 
             

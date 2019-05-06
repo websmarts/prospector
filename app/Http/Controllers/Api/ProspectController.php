@@ -38,8 +38,8 @@ class ProspectController extends Controller
 
 
         $prospect->campaigns()->updateExistingPivot($campaignId, [
-            'status'=> $request->prospect_campaign_status,
-            'note' => $request->prospect_campaign_note
+            'status'=> $request->campaign_status,
+            'note' => $request->campaign_note
             ]);
         
         
@@ -49,19 +49,20 @@ class ProspectController extends Controller
 
     protected function transform(Prospect $prospect, $campaignId){
 
-
+        // Gather prospects campaign_status and campaign_note
+        $campaign = $prospect->campaigns()->get()->where('pivot.campaign_id',$campaignId)->first();
         
         $data['activities'] = $prospect->activities()->get();
+        
         $data['contacts'] = $prospect->contacts()->get();
         
 
-        // Gather prospects campaign_status and campaign_note
-        $campaign = $prospect->campaigns()->get()->where('pivot.campaign_id',$campaignId)->first();
+        
 
         $data['prospect'] = $prospect->toArray();
         $data['prospect']['campaign_id'] = $campaign->id;
-        $data['prospect']['prospect_campaign_note'] = $campaign->pivot->note;
-        $data['prospect']['prospect_campaign_status'] = $campaign->pivot->status;
+        $data['prospect']['campaign_note'] = $campaign->pivot->note;
+        $data['prospect']['campaign_status'] = $campaign->pivot->status;
 
 
         return $data;

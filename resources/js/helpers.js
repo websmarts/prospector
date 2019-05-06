@@ -20,5 +20,19 @@ export default {
         }
         return status;
 
+    },
+    displayProspectCampaignStatus(statuscode){
+        let status = '';
+
+        switch (statuscode){
+            case 0 : 
+                status =  'Closed';
+                break;
+            case 1: 
+                status =  'Active';
+                break;
+
+        }
+        return status;
     }
 }

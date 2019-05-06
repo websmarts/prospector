@@ -61,8 +61,8 @@
 
               <v-flex xs12>
                 <v-select
-                  v-model="formdata.prospect_campaign_status"
-                  :items="[{value: 1, text: 'Closed'},{value:0,text:'Open'}]"
+                  v-model="formdata.campaign_status"
+                  :items="[{value:1,text:'Active'},{value: 0, text: 'Closed'}]"
                   label="Prospects campaign status*"
                   required
                 ></v-select>
@@ -126,7 +126,7 @@
           data.created_by = this.$store.state.user.id
           this.$store.dispatch('saveProspectActivity',data)
         }
-
+        
         this.close()
        
       }
@@ -144,10 +144,14 @@
         'due',
         'status',
         'assigned_to',
-        'created_by']
+        'created_by'
+        ]
 
       let formdata = {}
       keys.forEach(key => formdata[key] = this.item.hasOwnProperty(key) ? this.item[key] : '' )
+
+      // get the prospects current campaign status - this can be updated on the activity form - a logical convenience
+      formdata.campaign_status = this.prospect.campaign_status
       this.formdata = Object.assign({},formdata)
 
       // make a copy of original data for taint testing

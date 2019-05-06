@@ -23,7 +23,19 @@
             ></v-text-field>
             </div>
 
-           
+            <div>
+                    <v-text-field
+                    v-model="formdata.phone"     
+                    label="Phone"
+                ></v-text-field>
+                </div>
+                <div>
+                    <v-text-field
+                    v-model="formdata.email"     
+                    label="Email"
+                ></v-text-field>
+                </div>
+
 
                 <div>
                     <v-text-field
@@ -51,7 +63,7 @@
                 </div>
                 <div>
                     <v-text-field
-                    v-model="formdata.address3"     
+                    v-model="formdata.postcode"     
                     label="Postcode"
                 ></v-text-field>
                 </div>
@@ -78,7 +90,7 @@
 
                 <v-flex xs12 >
                 <v-textarea
-                  v-model="formdata.prospect_campaign_note"
+                  v-model="formdata.campaign_note"
                   label="Prospect campaign notes"
         
                   hint="Add prospect campaign notes here"
@@ -87,7 +99,7 @@
 
                 <v-flex xs12>
                     <v-select
-                    v-model="formdata.prospect_campaign_status"
+                    v-model="formdata.campaign_status"
                     :items="[{value: 1, text: 'Closed'},{value:0,text:'Open'}]"
                     label="Prospect campaign status*"
                     required
@@ -118,19 +130,7 @@ export default {
             valid: false,
             showform: false,
             orgdata:{},
-            formdata: {
-                name: 'Fred and Barney',
-                address1: '123 The main Road',
-                address2: null,
-                address2: null,
-                city: 'Rokeby',
-                postcode: '3821',
-                state: 'NT',
-                country: 'Australia',
-                notes: 'Client notes',
-                prospect_campaign_note: 'Campaign notes for this prospect',
-                prospect_campaign_status: 'Basically open or closed'
-            },
+            formdata: {},
             states: ['VIC','NSW','NT','QLD','SA','TAS','WA'],
 
         }
@@ -152,6 +152,7 @@ export default {
             detail += _.get(this.orgdata,'address2') ? ", " + this.orgdata.address2 : ''
             detail += _.get(this.orgdata,'address3') ? ", " + this.orgdata.address3 : ''
             detail += _.get(this.orgdata,'city') ? ", " + this.orgdata.city : ''
+             detail += _.get(this.orgdata,'state') ? ", " + this.orgdata.state : ''
             detail += _.get(this.orgdata,'postcode') ? ", " + this.orgdata.postcode : ''
             
 
