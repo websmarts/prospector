@@ -39708,8 +39708,8 @@ var render = function() {
                   _c("v-select", {
                     attrs: {
                       items: [
-                        { value: 1, text: "Closed" },
-                        { value: 0, text: "Open" }
+                        { value: 0, text: "Closed" },
+                        { value: 1, text: "Open" }
                       ],
                       label: "Prospect campaign status*",
                       required: ""
@@ -82484,7 +82484,7 @@ __webpack_require__.r(__webpack_exports__);
         break;
 
       case 1:
-        status = 'Active';
+        status = 'Open';
         break;
     }
 

@@ -100,7 +100,7 @@
                 <v-flex xs12>
                     <v-select
                     v-model="formdata.campaign_status"
-                    :items="[{value: 1, text: 'Closed'},{value:0,text:'Open'}]"
+                    :items="[{value: 0, text: 'Closed'},{value:1,text:'Open'}]"
                     label="Prospect campaign status*"
                     required
                     ></v-select>
