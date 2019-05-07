@@ -82458,7 +82458,7 @@ __webpack_require__.r(__webpack_exports__);
     return str.charAt(0).toUpperCase() + str.slice(1);
   },
   formatDate: function formatDate(date) {
-    return date.slice(8, 10) + "/" + date.slice(5, 7) + "/" + date.slice(0, 4);
+    if (date) return date.slice(8, 10) + "/" + date.slice(5, 7) + "/" + date.slice(0, 4);
   },
   displayStatus: function displayStatus(statuscode) {
     var status = '';
