@@ -33,7 +33,13 @@ class ActivityController extends Controller
     {
         //$prospect = Prospect::find($request->prospect_id);
 
-        $activity = Activity::create($request->all());
+        $data = $request->all();
+
+        $data['status'] = (int) $request->input('status')?:0;
+
+
+        $activity = Activity::create($data);
+        
 
         return response()->json(['data' => $activity]);
     }

@@ -1907,6 +1907,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     campaignResources: function campaignResources() {
       return this.$store.getters.campaignResources;
+    },
+    dueInFuture: function dueInFuture() {
+      return _moment(this.formdata.due).isAfter(_moment());
     }
   },
   methods: {
@@ -1928,6 +1931,14 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       this.close();
+    }
+  },
+  watch: {
+    dueInFuture: function dueInFuture(val) {
+      // if new is after now then set status to open
+      if (val && this.formdata) {
+        this.formdata.status = 1;
+      }
     }
   },
   mounted: function mounted() {

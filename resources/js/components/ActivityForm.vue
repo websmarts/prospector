@@ -106,6 +106,9 @@
       campaignResources(){
             return this.$store.getters.campaignResources
       },
+      dueInFuture() {
+        return _moment(this.formdata.due).isAfter(_moment())
+      }
       
     },
     methods: {
@@ -129,6 +132,14 @@
         
         this.close()
        
+      }
+    },
+    watch: {
+      dueInFuture: function(val) {
+        // if new is after now then set status to open
+        if(val && this.formdata ){
+          this.formdata.status = 1
+        }
       }
     },
     mounted() {
