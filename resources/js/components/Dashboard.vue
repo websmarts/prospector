@@ -8,7 +8,7 @@
                     {{ user.name }}
                 <v-spacer></v-spacer>
                 <v-toolbar-items class="hidden-sm-and-down">
-                <v-btn flat>Logout</v-btn>
+                <v-btn @click="logout" flat>Logout</v-btn>
             
                 </v-toolbar-items>
             </v-toolbar>
@@ -44,6 +44,11 @@ export default {
     data() {
         return {
             
+        }
+    },
+    methods: {
+        logout() {
+            window.location.href='/logout'
         }
     },
     computed: {

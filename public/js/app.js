@@ -2338,6 +2338,11 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {};
   },
+  methods: {
+    logout: function logout() {
+      window.location.href = '/logout';
+    }
+  },
   computed: {
     user: function user() {
       return this.$store.state.user;
@@ -38907,7 +38912,13 @@ var render = function() {
               _c(
                 "v-toolbar-items",
                 { staticClass: "hidden-sm-and-down" },
-                [_c("v-btn", { attrs: { flat: "" } }, [_vm._v("Logout")])],
+                [
+                  _c(
+                    "v-btn",
+                    { attrs: { flat: "" }, on: { click: _vm.logout } },
+                    [_vm._v("Logout")]
+                  )
+                ],
                 1
               )
             ],
